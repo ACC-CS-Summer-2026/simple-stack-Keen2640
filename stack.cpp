@@ -1,92 +1,108 @@
-/* *************************************************
-*  Name: Aniketh Sriramoju
-*  Assignment: Assignment 4
-*  Purpose: Class definition file for an integer Stack ADT
-************************************************* */
+/*****************************************************************
+ * File: stack.cpp
+ * Author: Aniketh Sriramoju
+ * Date: June 21, 2026
+ * Description: Implementation of the Stack ADT and StackException
+ *              class declared in stack.h.
+ *****************************************************************/
 
 #include "stack.h"
-#include <stdexcept>
 
-Stack::Stack()
-{
-/* **************************
-* Default constructor, initializes top to -1 (empty)
-*
-* @param : none
-* @exception : none
-* @return : void
-* @note : none
-****************************/
-    top = -1;
+/*****************************************************************
+ * Function: StackException::StackException
+ * Description: Constructs an exception carrying an error message.
+ * Parameters: msg - description of the error condition
+ * Returns: none (constructor)
+ *****************************************************************/
+StackException::StackException(const std::string &msg) : message(msg) {
 }
 
-bool Stack::isEmpty()
-{
-/* **************************
-* Tests whether the stack is empty
-*
-* @param : none
-* @exception : none
-* @return bool : true if empty, false otherwise
-* @note : none
-****************************/
+/*****************************************************************
+ * Function: StackException::what
+ * Description: Returns the error message for this exception.
+ * Parameters: none
+ * Returns: const char* - the error message
+ *****************************************************************/
+const char* StackException::what() const noexcept {
+    return message.c_str();
+}
+
+/*****************************************************************
+ * Function: Stack::Stack
+ * Description: Constructs an empty stack.
+ * Parameters: none
+ * Returns: none (constructor)
+ *****************************************************************/
+Stack::Stack() : top(-1) {
+}
+
+/*****************************************************************
+ * Function: Stack::isEmpty
+ * Description: Tests whether the stack currently holds no values.
+ * Parameters: none
+ * Returns: bool - true if the stack is empty, false otherwise
+ *****************************************************************/
+bool Stack::isEmpty() const {
     return top < 0;
 }
 
-bool Stack::push(int value)
-{
-/* **************************
-* Pushes a value onto the top of the stack,
-* if there is room. Returns false on overflow.
-*
-* @param int : value
-* @exception : none
-* @return bool : true on success, false on overflow
-* @note : none
-****************************/
-    if (top >= STACK_SIZE - 1)
-    {
-        return false;
+/*****************************************************************
+ * Function: Stack::push
+ * Description: Inserts a value onto the top of the stack.
+ * Parameters: value - the integer to push
+ * Returns: bool - true on success, false if the stack is full
+ *****************************************************************/
+bool Stack::push(int value) {
+    bool success;
+
+    if (top >= STACK_SIZE - 1) {
+        success = false;
+    } else {
+        top++;
+        stackArray[top] = value;
+        success = true;
     }
-    top++;
-    data[top] = value;
-    return true;
+
+    return success;
 }
 
-int Stack::pop()
-{
-/* **************************
-* Removes and returns the top value of the stack.
-* Throws an exception on underflow.
-*
-* @param : none
-* @exception std::underflow_error : thrown if stack is empty
-* @return int : the value removed from the top of the stack
-* @note : none
-****************************/
-    if (isEmpty())
-    {
-        throw std::underflow_error("Stack underflow: cannot pop from an empty stack.");
+/*****************************************************************
+ * Function: Stack::pop
+ * Description: Removes and returns the value at the top of the
+ *              stack.
+ * Parameters: none
+ * Returns: int - the value formerly at the top of the stack
+ * Throws: StackException if the stack is empty
+ *****************************************************************/
+int Stack::pop() {
+    int value;
+
+    if (isEmpty()) {
+        throw StackException("Stack underflow: cannot pop an empty stack.");
     }
-    int value = data[top];
+
+    value = stackArray[top];
     top--;
+
     return value;
 }
 
-int Stack::peek()
-{
-/* **************************
-* Returns the top value of the stack without removing it.
-* Throws an exception on underflow.
-*
-* @param : none
-* @exception std::underflow_error : thrown if stack is empty
-* @return int : the value at the top of the stack
-* @note : none
-****************************/
-    if (isEmpty())
-    {
-        throw std::underflow_error("Stack underflow: cannot peek an empty stack.");
+/*****************************************************************
+ * Function: Stack::peek
+ * Description: Returns the value at the top of the stack without
+ *              removing it.
+ * Parameters: none
+ * Returns: int - the value at the top of the stack
+ * Throws: StackException if the stack is empty
+ *****************************************************************/
+int Stack::peek() const {
+    int value;
+
+    if (isEmpty()) {
+        throw StackException("Stack underflow: cannot peek an empty stack.");
     }
-    return data[top];
+
+    value = stackArray[top];
+
+    return value;
 }
