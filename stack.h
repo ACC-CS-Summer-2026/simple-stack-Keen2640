@@ -1,56 +1,76 @@
-/*****************************************************************
+/*
  * File: stack.h
  * Author: Aniketh Sriramoju
  * Date: June 21, 2026
- * Description: Interface for a fixed-size integer Stack ADT.
- *              Provides push, pop, peek, and isEmpty operations.
- *              Underflow on pop()/peek() is reported via the
- *              StackException class. Overflow on push() is
- *              reported via a boolean return value.
- *****************************************************************/
+ * Description: Interface for the Stack ADT. Implements a fixed-size
+ *              integer stack backed by a static array. Provides push,
+ *              pop, peek, and isEmpty operations. Underflow conditions
+ *              on pop() and peek() are reported via exception handling
+ *              (std::underflow_error) rather than a special return value.
+ */
 
 #ifndef STACK_H
 #define STACK_H
 
-#include <exception>
-#include <string>
+#include <stdexcept>
 
-// Maximum capacity of the stack. Change this one value to resize
-// the stack for testing; all dependent code (including main's
-// tests) scales automatically since it is referenced, not hardcoded.
+// Maximum capacity of the stack. Declared here (not inside the class
+// or the .cpp file) so client code, such as main.cpp, can see it and
+// build tests that automatically scale if this value is changed.
 const int STACK_SIZE = 10;
 
-/*****************************************************************
- * Class: StackException
- * Description: Exception thrown by Stack::pop() and Stack::peek()
- *              when invoked on an empty stack (underflow).
- *****************************************************************/
-class StackException : public std::exception {
-private:
-    std::string message;
+// Sentinel value for "top" when the stack holds no elements.
+const int EMPTY_TOP = -1;
 
-public:
-    explicit StackException(const std::string &msg);
-    const char* what() const noexcept override;
-};
-
-/*****************************************************************
- * Class: Stack
- * Description: A simple fixed-capacity LIFO integer stack backed
- *              by a statically-sized array of STACK_SIZE elements.
- *****************************************************************/
 class Stack {
 private:
-    int stackArray[STACK_SIZE];
+    int data[STACK_SIZE];
     int top;
 
 public:
+    /*
+     * Function: Stack (constructor)
+     * Description: Initializes an empty stack.
+     * Parameters: none
+     * Return: none
+     */
     Stack();
 
-    int pop();             // remove and return top value; throws StackException if empty
-    int peek() const;      // return top value without removing; throws StackException if empty
-    bool push(int value);  // insert value at top; returns false on overflow
-    bool isEmpty() const;  // returns true if top < 0
+    /*
+     * Function: push
+     * Description: Inserts a value onto the top of the stack.
+     * Parameters: value - the integer value to push
+     * Return: bool - true if the push succeeded, false if the stack
+     *         was already full (overflow)
+     */
+    bool push(int value);
+
+    /*
+     * Function: pop
+     * Description: Removes and returns the value at the top of the stack.
+     * Parameters: none
+     * Return: int - the value removed from the top of the stack
+     * Throws: std::underflow_error if the stack is empty
+     */
+    int pop();
+
+    /*
+     * Function: peek
+     * Description: Returns the value at the top of the stack without
+     *              removing it.
+     * Parameters: none
+     * Return: int - the value currently at the top of the stack
+     * Throws: std::underflow_error if the stack is empty
+     */
+    int peek();
+
+    /*
+     * Function: isEmpty
+     * Description: Tests whether the stack currently holds no elements.
+     * Parameters: none
+     * Return: bool - true if the stack is empty (top < 0), false otherwise
+     */
+    bool isEmpty();
 };
 
 #endif
